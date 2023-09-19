@@ -1,5 +1,7 @@
 {
+  "importMap": "import_map.jsonc",
   "tasks": {
+    "bench": "deno bench",
     "dev": "deno run --watch main.ts"
   }
 }

@@ -1,7 +1,11 @@
 {
-  "importMap": "import_map.jsonc",
+  "imports": {
+    "std/": "https://deno.land/std@0.202.0/",
+    "deno_dom/": "https://deno.land/x/deno_dom@v0.1.38/",
+    "cliffy/": "https://deno.land/x/cliffy@v1.0.0-rc.3/"
+  },
   "tasks": {
     "bench": "deno bench",
-    "dev": "deno run --watch main.ts"
+    "dev": "deno run --watch  --allow-read --allow-write --allow-net --allow-env --allow-run main.ts"
   }
 }

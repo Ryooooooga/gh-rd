@@ -1,7 +1,7 @@
 import { assertEquals } from "std/assert/mod.ts";
-import { Arch, getDownloadURL, OS } from "./main.ts";
+import { findAssetURL } from "./mod.ts";
 
-Deno.test("getDownloadURL", async (t) => {
+Deno.test(async function testFindAssetURL(t) {
   type Test = {
     description: string;
     input: {
@@ -339,7 +339,7 @@ Deno.test("getDownloadURL", async (t) => {
   for (const s of tests) {
     await t.step(s.description, () => {
       assertEquals(
-        getDownloadURL(
+        findAssetURL(
           s.input.artifactURLs,
           "linux",
           "x86_64",
@@ -348,7 +348,7 @@ Deno.test("getDownloadURL", async (t) => {
       );
 
       assertEquals(
-        getDownloadURL(
+        findAssetURL(
           s.input.artifactURLs,
           "linux",
           "aarch64",
@@ -356,7 +356,7 @@ Deno.test("getDownloadURL", async (t) => {
         s.expected.linux_aarch64,
       );
       assertEquals(
-        getDownloadURL(
+        findAssetURL(
           s.input.artifactURLs,
           "darwin",
           "x86_64",
@@ -364,7 +364,7 @@ Deno.test("getDownloadURL", async (t) => {
         s.expected.darwin_x86_64,
       );
       assertEquals(
-        getDownloadURL(
+        findAssetURL(
           s.input.artifactURLs,
           "darwin",
           "aarch64",

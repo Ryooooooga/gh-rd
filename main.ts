@@ -1,6 +1,6 @@
 #!/usr/bin/env -S deno run --no-check --no-lock --allow-read --allow-write --allow-net --allow-env --allow-run
 import { basename } from "std/path/basename.ts";
-import { loadConfig } from "./src/mod.ts";
+import { findExecutables, linkExecutable, loadConfig } from "./src/mod.ts";
 import {
   downloadAsset,
   extractArchive,
@@ -11,7 +11,7 @@ import {
   fetchLatestReleaseTag,
   fetchReleasedArtifactURLs,
 } from "./src/github/releases.ts";
-import { getPackageDir } from "./src/path.ts";
+import { getBinDir, getPackageDir } from "./src/path.ts";
 
 const config = await loadConfig();
 
@@ -23,18 +23,28 @@ async function download(tempDir: string, tool: ToolConfig) {
     throw new Error("Invalid tool name");
   }
   const [user, repo] = segments;
+  const packageDir = getPackageDir(user, repo);
 
   const tag = tool.tag ?? await fetchLatestReleaseTag(user, repo);
   const assetsURLs = await fetchReleasedArtifactURLs(user, repo, tag);
   const assetURL = findAssetURL(assetsURLs, Deno.build.os, Deno.build.arch);
-
-  if (assetURL !== undefined) {
-    const filename = `${tempDir}/${basename(assetURL)}`;
-    console.log(`  Downloading ${assetURL}...`);
-    await downloadAsset(assetURL, filename);
-    console.log(`  Extracting ${basename(filename)}...`);
-    await extractArchive(filename, getPackageDir(user, repo));
+  if (assetURL === undefined) {
+    throw new Error("No asset found");
   }
+
+  const filename = `${tempDir}/${basename(assetURL)}`;
+  console.log(`  Downloading ${assetURL}...`);
+  await downloadAsset(assetURL, filename);
+  console.log(`  Extracting ${basename(filename)}...`);
+  await extractArchive(filename, packageDir);
+
+  const executables = await findExecutables(
+    user,
+    repo,
+    packageDir,
+    tool.executables,
+  );
+  await linkExecutable(executables, getBinDir());
 }
 
 const tempDir = await Deno.makeTempDir({ prefix: "gh-rd-" });

@@ -1,4 +1,5 @@
-#!/usr/bin/env -S deno run --no-check --allow-read --allow-write --allow-net --allow-env --allow-run
+#!/usr/bin/env -S deno run --no-check --no-lock --allow-read --allow-write --allow-net --allow-env --allow-run
+import { loadConfig } from "./src/mod.ts";
 import {
   downloadAsset,
   extractArchive,
@@ -8,6 +9,8 @@ import {
   fetchLatestReleaseTag,
   fetchReleasedArtifactURLs,
 } from "./src/github/releases.ts";
+
+const config = await loadConfig();
 
 async function download(name: string) {
   console.log(`Installing ${name}...`);

@@ -277,13 +277,13 @@ Deno.test(async function testFindAssetURL(t) {
       },
       expected: {
         linux_x86_64:
-          "https://github.com/mikefarah/yq/releases/download/v4.35.1/yq_linux_amd64",
+          "https://github.com/mikefarah/yq/releases/download/v4.35.1/yq_linux_amd64.tar.gz",
         linux_aarch64:
-          "https://github.com/mikefarah/yq/releases/download/v4.35.1/yq_linux_arm64",
+          "https://github.com/mikefarah/yq/releases/download/v4.35.1/yq_linux_arm64.tar.gz",
         darwin_x86_64:
-          "https://github.com/mikefarah/yq/releases/download/v4.35.1/yq_darwin_amd64",
+          "https://github.com/mikefarah/yq/releases/download/v4.35.1/yq_darwin_amd64.tar.gz",
         darwin_aarch64:
-          "https://github.com/mikefarah/yq/releases/download/v4.35.1/yq_darwin_arm64",
+          "https://github.com/mikefarah/yq/releases/download/v4.35.1/yq_darwin_arm64.tar.gz",
       },
     },
     {

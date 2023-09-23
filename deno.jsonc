@@ -6,6 +6,7 @@
   },
   "tasks": {
     "bench": "deno bench",
-    "dev": "deno run --watch  --allow-read --allow-write --allow-net --allow-env --allow-run main.ts"
+    "dev": "deno run --watch  --allow-read --allow-write --allow-net --allow-env --allow-run main.ts",
+    "test": "deno test --allow-read"
   }
 }

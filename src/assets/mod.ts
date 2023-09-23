@@ -13,6 +13,8 @@ export function findAssetURL(
     score: number;
   };
 
+  const minScore = 200;
+
   const rules: MatchRule[] = [
     // Ignore junk files
     {
@@ -41,7 +43,7 @@ export function findAssetURL(
       break;
     case "windows":
       rules.push({
-        pattern: /windows/i,
+        pattern: /windows|\.exe/i,
         score: 100,
       });
       break;
@@ -75,7 +77,7 @@ export function findAssetURL(
       }, 0);
       return [url, score];
     })
-    .filter(([, score]) => score > 0)
+    .filter(([, score]) => score >= minScore)
     .sort(([, scoreA], [, scoreB]) => scoreB - scoreA)
     .map(([url]) => url)
     .find(() => true);

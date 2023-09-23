@@ -109,6 +109,17 @@ function getArchiveTypeFromPath(archivePath: string): ArchiveType | null {
   return null;
 }
 
+async function runCommand(
+  cmd: string,
+  ...args: string[]
+): Promise<Deno.CommandOutput> {
+  return await new Deno.Command(cmd, {
+    args,
+    stdout: "inherit",
+    stderr: "inherit",
+  }).output();
+}
+
 export async function extractArchive(archivePath: string): Promise<string> {
   const archiveType = getArchiveTypeFromPath(archivePath);
   if (archiveType === null) {
@@ -120,11 +131,13 @@ export async function extractArchive(archivePath: string): Promise<string> {
     case ".tar.gz": {
       await Deno.mkdir(destinationPath, { recursive: true });
 
-      const { success } = await new Deno.Command("tar", {
-        args: ["-zxf", archivePath, "-C", destinationPath],
-        stdout: "inherit",
-        stderr: "inherit",
-      }).output();
+      const { success } = await runCommand(
+        "tar",
+        "-zxf",
+        archivePath,
+        "-C",
+        destinationPath,
+      );
       if (!success) {
         throw new Error(`Failed to extract '${archivePath}'`);
       }
@@ -133,11 +146,13 @@ export async function extractArchive(archivePath: string): Promise<string> {
     }
 
     case ".zip": {
-      const { success } = await new Deno.Command("unzip", {
-        args: ["-oq", archivePath, "-d", dirname(destinationPath)],
-        stdout: "inherit",
-        stderr: "inherit",
-      }).output();
+      const { success } = await runCommand(
+        "unzip",
+        "-joq",
+        archivePath,
+        "-d",
+        destinationPath,
+      );
       if (!success) {
         throw new Error(`Failed to extract '${archivePath}'`);
       }

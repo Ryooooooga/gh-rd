@@ -22,7 +22,7 @@ async function download(name: string) {
     console.log(`  Downloading ${assetURL} to ${filename}...`);
     await downloadAsset(assetURL, filename);
     console.log(`  Extracting ${filename}...`);
-    await extractArchive(filename);
+    await extractArchive(filename, `dist/${user}---${repo}`);
   }
 }
 const tools = [

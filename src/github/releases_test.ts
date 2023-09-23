@@ -1,11 +1,26 @@
 import { assertEquals, assertRejects } from "std/assert/mod.ts";
-import { assertSpyCalls } from "std/testing/mock.ts";
+import { assertSpyCalls, stub } from "std/testing/mock.ts";
 import {
   fetchLatestReleaseTag,
   fetchReleasedArtifactURLs,
   GITHUB_BASE_URL,
 } from "./releases.ts";
-import { spyFetch } from "./test.ts";
+
+function spyFetch(
+  expectedMethod: string,
+  expectedURL: string,
+  response: Response,
+) {
+  return stub(
+    globalThis,
+    "fetch",
+    (input, init) => {
+      assertEquals(input, expectedURL);
+      assertEquals(init?.method ?? "GET", expectedMethod);
+      return Promise.resolve(response);
+    },
+  );
+}
 
 Deno.test(async function testFetchLatestReleaseTag(t) {
   await t.step("should fetch latest release tag", async () => {

@@ -88,7 +88,7 @@ export function findAssetURL(
 export async function downloadAsset(
   assetURL: string,
   destinationPath: string,
-): Promise<void> {
+) {
   const res = await fetch(assetURL);
   if (!res.ok) {
     throw new Error(`Failed to download asset from '${assetURL}'`);
@@ -122,17 +122,21 @@ async function runCommand(
   }).output();
 }
 
-export async function extractArchive(archivePath: string): Promise<string> {
+export async function extractArchive(
+  archivePath: string,
+  destinationPath: string,
+) {
+  await Deno.mkdir(destinationPath, { recursive: true });
+
   const archiveType = getArchiveTypeFromPath(archivePath);
-  if (archiveType === null) {
-    return archivePath;
-  }
-
-  const destinationPath = archivePath.slice(0, -archiveType.length);
   switch (archiveType) {
+    case null:
+      await Deno.copyFile(
+        archivePath,
+        `${destinationPath}/${basename(archivePath)}`,
+      );
+      break;
     case ".tar.gz": {
-      await Deno.mkdir(destinationPath, { recursive: true });
-
       const { success } = await runCommand(
         "tar",
         "-zxf",
@@ -143,7 +147,6 @@ export async function extractArchive(archivePath: string): Promise<string> {
       if (!success) {
         throw new Error(`Failed to extract '${archivePath}'`);
       }
-
       break;
     }
 
@@ -158,7 +161,6 @@ export async function extractArchive(archivePath: string): Promise<string> {
       if (!success) {
         throw new Error(`Failed to extract '${archivePath}'`);
       }
-
       break;
     }
 
@@ -166,6 +168,4 @@ export async function extractArchive(archivePath: string): Promise<string> {
       archiveType satisfies never;
       throw new Error(`Unknown archive type '${archivePath}'`);
   }
-
-  return destinationPath;
 }

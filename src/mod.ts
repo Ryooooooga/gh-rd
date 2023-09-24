@@ -1,7 +1,7 @@
 import { expandGlob } from "std/fs/mod.ts";
 import { basename } from "std/path/basename.ts";
 import * as YAML from "std/yaml/mod.ts";
-import { Config, ExecutableConfig } from "./config.ts";
+import { Config, ExecutableConfig, RenameConfig } from "./config.ts";
 import { getConfigPath, getStatePath } from "./path.ts";
 import { State } from "./state.ts";
 import { dirname } from "std/path/dirname.ts";
@@ -25,6 +25,25 @@ export async function saveState(state: State) {
   const content = YAML.stringify(state);
   await Deno.mkdir(dirname(statePath), { recursive: true });
   await Deno.writeTextFile(statePath, content);
+}
+
+export async function renameFiles(
+  _user: string,
+  _repo: string,
+  packageDir: string,
+  renames: ReadonlyArray<RenameConfig>,
+) {
+  for (const { from, to } of renames) {
+    const entries = expandGlob(from, {
+      root: packageDir,
+      includeDirs: true,
+    });
+
+    for await (const { path: fromPath } of entries) {
+      const toPath = `${packageDir}/${to}`;
+      await Deno.rename(fromPath, toPath);
+    }
+  }
 }
 
 export async function findExecutables(

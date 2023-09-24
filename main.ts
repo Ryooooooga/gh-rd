@@ -5,6 +5,7 @@ import {
   linkExecutable,
   loadConfig,
   loadState,
+  renameFiles,
   saveState,
 } from "./src/mod.ts";
 import {
@@ -62,6 +63,17 @@ async function download(
   await downloadAsset(assetURL, filename);
   console.log(`  Extracting ${basename(filename)}...`);
   await extractArchive(filename, packageDir);
+
+  if (tool.rename !== undefined) {
+    await renameFiles(user, repo, packageDir, tool.rename);
+  }
+
+  if (tool.onDownload !== undefined) {
+    await tool.onDownload({ name: tool.name, tag, packageDir })
+      .catch((err) => {
+        console.error(err);
+      });
+  }
 
   const executables = await findExecutables(
     user,

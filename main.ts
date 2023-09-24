@@ -1,21 +1,38 @@
 #!/usr/bin/env -S deno run --no-check --no-lock --allow-read --allow-write --allow-net --allow-env --allow-run
 import { basename } from "std/path/basename.ts";
-import { findExecutables, linkExecutable, loadConfig } from "./src/mod.ts";
+import {
+  findExecutables,
+  linkExecutable,
+  loadConfig,
+  loadState,
+  saveState,
+} from "./src/mod.ts";
 import {
   downloadAsset,
   extractArchive,
   findAssetURL,
 } from "./src/assets/mod.ts";
-import { ToolConfig } from "./src/config.ts";
+import { Config, ToolConfig } from "./src/config.ts";
 import {
   fetchLatestReleaseTag,
   fetchReleasedArtifactURLs,
 } from "./src/github/releases.ts";
 import { getBinDir, getPackageDir } from "./src/path.ts";
+import { State, ToolState } from "./src/state.ts";
 
-const config = await loadConfig();
+async function fileExists(path: string): Promise<boolean> {
+  try {
+    return (await Deno.stat(path)).isDirectory;
+  } catch (_err) {
+    return false;
+  }
+}
 
-async function download(tempDir: string, tool: ToolConfig) {
+async function download(
+  tempDir: string,
+  tool: ToolConfig,
+  installedTag: string | undefined,
+): Promise<ToolState> {
   console.log(`Installing ${tool.name}...`);
 
   const segments = tool.name.split("/");
@@ -26,6 +43,14 @@ async function download(tempDir: string, tool: ToolConfig) {
   const packageDir = getPackageDir(user, repo);
 
   const tag = tool.tag ?? await fetchLatestReleaseTag(user, repo);
+  if (installedTag === tag && await fileExists(packageDir)) {
+    console.log(`  Already installed ${tag}`);
+    return {
+      name: tool.name,
+      tag,
+    };
+  }
+
   const assetsURLs = await fetchReleasedArtifactURLs(user, repo, tag);
   const assetURL = findAssetURL(assetsURLs, Deno.build.os, Deno.build.arch);
   if (assetURL === undefined) {
@@ -45,11 +70,41 @@ async function download(tempDir: string, tool: ToolConfig) {
     tool.executables,
   );
   await linkExecutable(executables, getBinDir());
+
+  return {
+    name: tool.name,
+    tag,
+  };
 }
+
+async function downloadAll(
+  tempDir: string,
+  config: Config,
+  state: State,
+): Promise<State> {
+  const installedTagMap = new Map(
+    state.tools.map(({ name, tag }) => [name, tag]),
+  );
+
+  const newToolStates = await Promise.all(
+    config.tools.map((tool) =>
+      download(tempDir, tool, installedTagMap.get(tool.name))
+    ),
+  );
+
+  newToolStates.sort((a, b) => a.name.localeCompare(b.name));
+  return {
+    tools: newToolStates,
+  };
+}
+
+const config = await loadConfig();
+const state = await loadState();
 
 const tempDir = await Deno.makeTempDir({ prefix: "gh-rd-" });
 try {
-  await Promise.all(config.tools.map((tool) => download(tempDir, tool)));
+  const newState = await downloadAll(tempDir, config, state);
+  await saveState(newState);
 } finally {
   try {
     await Deno.remove(tempDir, { recursive: true });

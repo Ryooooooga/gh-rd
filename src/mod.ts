@@ -1,11 +1,30 @@
 import { expandGlob } from "std/fs/mod.ts";
 import { basename } from "std/path/basename.ts";
+import * as YAML from "std/yaml/mod.ts";
 import { Config, ExecutableConfig } from "./config.ts";
-import { getConfigPath } from "./path.ts";
+import { getConfigPath, getStatePath } from "./path.ts";
+import { State } from "./state.ts";
+import { dirname } from "std/path/dirname.ts";
 
 export async function loadConfig(): Promise<Config> {
   const { default: config } = await import(getConfigPath());
   return config;
+}
+
+export async function loadState(): Promise<State> {
+  try {
+    const content = await Deno.readTextFile(getStatePath());
+    return YAML.parse(content) as State;
+  } catch (_err) {
+    return { tools: [] };
+  }
+}
+
+export async function saveState(state: State) {
+  const statePath = getStatePath();
+  const content = YAML.stringify(state);
+  await Deno.mkdir(dirname(statePath), { recursive: true });
+  await Deno.writeTextFile(statePath, content);
 }
 
 export async function findExecutables(

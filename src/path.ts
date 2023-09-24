@@ -30,7 +30,7 @@ export function getPackagesDir(): string {
 }
 
 export function getPackageDir(user: string, repo: string): string {
-  return `${getPackagesDir()}/${encodeURIComponent(user)}---${
+  return `${getPackagesDir()}/github.com/${encodeURIComponent(user)}/${
     encodeURIComponent(repo)
   }`;
 }

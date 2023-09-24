@@ -130,12 +130,13 @@ Deno.test(async function testPaths(t) {
     // getPackageDir
     {
       description:
-        'getPackageDir returns "${getPackagesDir()}/${user}---${repo}"',
+        'getPackageDir returns "${getPackagesDir()}/github.com/${user}/${repo}"',
       env: {
         HOME: "/home/alan",
       },
       fn: () => getPackageDir("Ryooooooga", "croque"),
-      extected: `/home/alan/.local/share/gh-rd/packages/Ryooooooga---croque`,
+      extected:
+        `/home/alan/.local/share/gh-rd/packages/github.com/Ryooooooga/croque`,
     },
     // getStatePath
     {

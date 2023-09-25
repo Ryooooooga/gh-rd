@@ -1,4 +1,3 @@
-#!/usr/bin/env -S deno run --no-check --no-lock --allow-read --allow-write --allow-net --allow-env --allow-run
 import { basename } from "std/path/basename.ts";
 import {
   findCompletions,

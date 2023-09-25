@@ -1,7 +1,9 @@
 #!/usr/bin/env -S deno run --no-check --no-lock --allow-read --allow-write --allow-net --allow-env --allow-run
 import { basename } from "std/path/basename.ts";
 import {
+  findCompletions,
   findExecutables,
+  linkCompletion,
   linkExecutable,
   loadConfig,
   loadState,
@@ -18,7 +20,7 @@ import {
   fetchLatestReleaseTag,
   fetchReleasedArtifactURLs,
 } from "./src/github/releases.ts";
-import { getBinDir, getPackageDir } from "./src/path.ts";
+import { getBinDir, getCompletionsDir, getPackageDir } from "./src/path.ts";
 import { State, ToolState } from "./src/state.ts";
 
 async function fileExists(path: string): Promise<boolean> {
@@ -68,20 +70,34 @@ async function download(
     await renameFiles(user, repo, packageDir, tool.rename);
   }
 
-  if (tool.onDownload !== undefined) {
-    await tool.onDownload({ name: tool.name, tag, packageDir })
-      .catch((err) => {
-        console.error(err);
-      });
-  }
-
   const executables = await findExecutables(
     user,
     repo,
     packageDir,
     tool.executables,
   );
+
+  if (tool.onDownload !== undefined) {
+    await tool.onDownload({
+      name: tool.name,
+      tag,
+      packageDir,
+      bin: executables,
+    }).catch((err) => {
+      console.error(err);
+    });
+  }
+
   await linkExecutable(executables, getBinDir());
+
+  const completions = await findCompletions(
+    user,
+    repo,
+    packageDir,
+    tool.completions,
+  );
+
+  await linkCompletion(completions, getCompletionsDir());
 
   return {
     name: tool.name,

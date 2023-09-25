@@ -9,7 +9,7 @@ import {
 } from "./path.ts";
 
 function spyEnvGet(
-  env: Record<string, string | undefined>,
+  env: Partial<Record<string, string>>,
 ) {
   return stub(
     Deno.env,
@@ -21,7 +21,7 @@ function spyEnvGet(
 Deno.test(async function testPaths(t) {
   type Test = {
     description: string;
-    env: Record<string, string | undefined>;
+    env: Partial<Record<string, string>>;
     fn: () => string;
     extected: string;
   };

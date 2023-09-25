@@ -25,6 +25,10 @@ export function getBinDir(): string {
   return `${getDataHomePath()}/bin`;
 }
 
+export function getCompletionsDir(): string {
+  return `${getDataHomePath()}/completions`;
+}
+
 export function getPackagesDir(): string {
   return `${getDataHomePath()}/packages`;
 }

@@ -1,7 +1,12 @@
 import { expandGlob } from "std/fs/mod.ts";
 import { basename } from "std/path/basename.ts";
 import * as YAML from "std/yaml/mod.ts";
-import { Config, ExecutableConfig, RenameConfig } from "./config.ts";
+import {
+  CompletionConfig,
+  Config,
+  ExecutableConfig,
+  RenameConfig,
+} from "./config.ts";
 import { getConfigPath, getStatePath } from "./path.ts";
 import { State } from "./state.ts";
 import { dirname } from "std/path/dirname.ts";
@@ -46,49 +51,89 @@ export async function renameFiles(
   }
 }
 
+export type Executables = Record<string, string>;
+
 export async function findExecutables(
   _user: string,
   repo: string,
   packageDir: string,
   executables: ReadonlyArray<ExecutableConfig> | undefined,
-): Promise<ReadonlyArray<Executable>> {
-  const result: Executable[] = [];
+): Promise<Readonly<Executables>> {
+  const result: Executables = {};
 
   const defaultExecutables: ReadonlyArray<ExecutableConfig> = [
     { glob: `**/${repo}`, as: repo },
   ];
 
-  for (const { glob, as } of executables ?? defaultExecutables) {
+  for (const { glob, exclude, as } of executables ?? defaultExecutables) {
     const entries = expandGlob(glob, {
       root: packageDir,
       includeDirs: false,
+      exclude: exclude !== undefined ? [...exclude] : undefined,
     });
     for await (const { path } of entries) {
-      result.push({
-        path,
-        as: as ?? basename(path),
-      });
+      result[as ?? basename(path)] = path;
     }
   }
 
   return result;
 }
 
-export type Executable = {
-  path: string;
-  as: string;
-};
-
 export async function linkExecutable(
-  executables: ReadonlyArray<Executable>,
+  executables: Readonly<Executables>,
   binDir: string,
 ) {
   await Deno.mkdir(binDir, { recursive: true });
 
-  await Promise.all(executables.map(async ({ path, as }) => {
-    const destination = `${binDir}/${as}`;
-    await Deno.chmod(path, 0o755);
-    await Deno.remove(destination).catch(() => {});
-    await Deno.symlink(path, destination);
-  }));
+  await Promise.all(
+    Object.entries(executables).map(async ([as, path]) => {
+      const destination = `${binDir}/${as}`;
+      await Deno.chmod(path, 0o755);
+      await Deno.remove(destination).catch(() => {});
+      await Deno.symlink(path, destination);
+    }),
+  );
+}
+
+export type Completions = Record<string, string>;
+
+export async function findCompletions(
+  _user: string,
+  _repo: string,
+  packageDir: string,
+  completions: ReadonlyArray<CompletionConfig> | undefined,
+): Promise<Readonly<Completions>> {
+  const result: Completions = {};
+
+  const defaultCompletions: ReadonlyArray<CompletionConfig> = [
+    { glob: `**/_*`, exclude: ["**/_*.*"] },
+  ];
+
+  for (const { glob, exclude, as } of completions ?? defaultCompletions) {
+    const entries = expandGlob(glob, {
+      root: packageDir,
+      includeDirs: false,
+      exclude: exclude !== undefined ? [...exclude] : undefined,
+    });
+    for await (const { path } of entries) {
+      result[as ?? basename(path)] = path;
+    }
+  }
+
+  return result;
+}
+
+export async function linkCompletion(
+  completions: Readonly<Completions>,
+  completionsDir: string,
+) {
+  await Deno.mkdir(completionsDir, { recursive: true });
+
+  await Promise.all(
+    Object.entries(completions).map(async ([as, path]) => {
+      const destination = `${completionsDir}/${as}`;
+      await Deno.remove(destination).catch(() => {});
+      await Deno.symlink(path, destination);
+    }),
+  );
 }

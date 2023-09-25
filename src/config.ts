@@ -7,6 +7,7 @@ export type ToolConfig = Readonly<{
   tag?: string | undefined;
   rename?: ReadonlyArray<RenameConfig> | undefined;
   executables?: ReadonlyArray<ExecutableConfig> | undefined;
+  completions?: ReadonlyArray<CompletionConfig> | undefined;
 
   onDownload?: ((event: DownloadEvent) => Promise<void>) | undefined;
 }>;
@@ -18,6 +19,13 @@ export type RenameConfig = Readonly<{
 
 export type ExecutableConfig = Readonly<{
   glob: string;
+  exclude?: ReadonlyArray<string> | undefined;
+  as?: string | undefined;
+}>;
+
+export type CompletionConfig = Readonly<{
+  glob: string;
+  exclude?: ReadonlyArray<string> | undefined;
   as?: string | undefined;
 }>;
 
@@ -25,6 +33,7 @@ export type DownloadEvent = {
   name: string;
   tag: string;
   packageDir: string;
+  bin: Readonly<Record<string, string>>;
 };
 
 export function defineConfig(config: Config): Config {

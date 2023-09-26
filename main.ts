@@ -34,7 +34,12 @@ async function download(
   tempDir: string,
   tool: ToolConfig,
   installedTag: string | undefined,
-): Promise<ToolState> {
+): Promise<ToolState | undefined> {
+  if (tool.enabled === false) {
+    console.log(`Skipping ${tool.name}...`);
+    return undefined;
+  }
+
   console.log(`Installing ${tool.name}...`);
 
   const segments = tool.name.split("/");
@@ -113,13 +118,13 @@ async function downloadAll(
     state.tools.map(({ name, tag }) => [name, tag]),
   );
 
-  const newToolStates = await Promise.all(
+  const newToolStates = (await Promise.all(
     config.tools.map((tool) =>
       download(tempDir, tool, installedTagMap.get(tool.name))
     ),
-  );
+  )).filter((state): state is ToolState => state !== undefined)
+    .sort((a, b) => a.name.localeCompare(b.name));
 
-  newToolStates.sort((a, b) => a.name.localeCompare(b.name));
   return {
     tools: newToolStates,
   };

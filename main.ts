@@ -51,7 +51,7 @@ async function download(
 
   const tag = tool.tag ?? await fetchLatestReleaseTag(user, repo);
   if (installedTag === tag && await fileExists(packageDir)) {
-    console.log(`  Already installed ${tag}`);
+    console.log(`  ${tool.name}: Already installed ${tag}`);
     return {
       name: tool.name,
       tag,
@@ -59,9 +59,14 @@ async function download(
   }
 
   const assetsURLs = await fetchReleasedArtifactURLs(user, repo, tag);
-  const assetURL = findAssetURL(assetsURLs, Deno.build.os, Deno.build.arch);
+  const assetURL = findAssetURL(
+    assetsURLs,
+    tool.use,
+    Deno.build.os,
+    Deno.build.arch,
+  );
   if (assetURL === undefined) {
-    throw new Error("No asset found");
+    throw new Error(`${tool.name}: No asset found`);
   }
 
   const filename = `${tempDir}/${basename(assetURL)}`;

@@ -1,13 +1,22 @@
-import { basename, dirname } from "std/path/mod.ts";
+import { basename, dirname, globToRegExp } from "std/path/mod.ts";
 
 export type OS = typeof Deno.build.os;
 export type Arch = typeof Deno.build.arch;
 
 export function findAssetURL(
   assetURLs: ReadonlyArray<string>,
+  use: string | undefined,
   os: OS,
   arch: Arch,
 ): string | undefined {
+  if (use !== undefined) {
+    const usePattern = globToRegExp(use);
+    const targetAssetURL = assetURLs.find((url) =>
+      usePattern.test(basename(url))
+    );
+    return targetAssetURL;
+  }
+
   type MatchRule = {
     pattern: RegExp;
     score: number;

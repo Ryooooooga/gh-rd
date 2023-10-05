@@ -6,6 +6,7 @@ export type ToolConfig = Readonly<{
   name: `${string}/${string}`; // <user>/<repo>
   tag?: string | undefined;
   enabled?: boolean | undefined;
+  use?: string | undefined;
   rename?: ReadonlyArray<RenameConfig> | undefined;
   executables?: ReadonlyArray<ExecutableConfig> | undefined;
   completions?: ReadonlyArray<CompletionConfig> | undefined;

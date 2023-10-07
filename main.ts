@@ -18,7 +18,7 @@ import { Config, ToolConfig } from "./src/config.ts";
 import {
   fetchLatestReleaseTag,
   fetchReleasedArtifactURLs,
-} from "./src/github/releases.ts";
+} from "./src/github/mod.ts";
 import { getBinDir, getCompletionsDir, getPackageDir } from "./src/path.ts";
 import { State, ToolState } from "./src/state.ts";
 

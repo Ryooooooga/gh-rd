@@ -1,5 +1,5 @@
 import { assertEquals } from "std/assert/mod.ts";
-import { findAssetURL } from "./mod.ts";
+import { findAssetURL } from "./file.ts";
 
 Deno.test(async function testFindAssetURL(t) {
   type Test = {

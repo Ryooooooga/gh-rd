@@ -256,7 +256,7 @@ async function installPackage(
 
     const tag = await getTag(user, repo, config.tag, onUpdate);
     if (await isUpToDate(tag, packageDir, state)) {
-      onUpdate({ type: "up_to_date" });
+      onUpdate({ type: "up_to_date", tag });
       return { type: "up_to_date", tag };
     }
 
@@ -294,7 +294,7 @@ async function installPackage(
       onUpdate,
     );
 
-    onUpdate({ type: "completed" });
+    onUpdate({ type: "completed", tag });
     return { type: "installed", tag };
   } catch (err) {
     onUpdate({ type: "error", error: err });
@@ -313,61 +313,63 @@ export async function installAllPackages(
   success: boolean;
   newState: State;
 }> {
-  view.start();
+  try {
+    view.start(config.tools);
 
-  const stateMap = new Map(
-    currentState.tools.map((state) => [state.name, state]),
-  );
+    const stateMap = new Map(
+      currentState.tools.map((state) => [state.name, state]),
+    );
 
-  const results = await Promise.all(
-    config.tools.map(
-      async (
-        toolConfig,
-      ): Promise<{
-        success: boolean;
-        newToolState: ToolState | undefined;
-      }> => {
-        const toolState = stateMap.get(toolConfig.name);
-
-        const result = await installPackage(
-          tempDir,
-          binDir,
-          completionsDir,
+    const results = await Promise.all(
+      config.tools.map(
+        async (
           toolConfig,
-          toolState,
-          (state) => view.update(toolConfig.name, state),
-        );
+        ): Promise<{
+          success: boolean;
+          newToolState: ToolState | undefined;
+        }> => {
+          const toolState = stateMap.get(toolConfig.name);
 
-        switch (result.type) {
-          case "installed":
-            return {
-              success: true,
-              newToolState: { name: toolConfig.name, tag: result.tag },
-            };
-          case "up_to_date":
-            return { success: true, newToolState: toolState };
-          case "skipped":
-            return { success: true, newToolState: toolState };
-          case "error":
-            return { success: false, newToolState: undefined };
-          default:
-            result satisfies never;
-            throw new Error(`Unexpected result: ${JSON.stringify(result)}`);
-        }
-      },
-    ),
-  );
+          const result = await installPackage(
+            tempDir,
+            binDir,
+            completionsDir,
+            toolConfig,
+            toolState,
+            (state) => view.update(toolConfig.name, state),
+          );
 
-  const newState: State = {
-    tools: results
-      .map(({ newToolState }) => newToolState)
-      .filter((state): state is ToolState => state !== undefined),
-  };
+          switch (result.type) {
+            case "installed":
+              return {
+                success: true,
+                newToolState: { name: toolConfig.name, tag: result.tag },
+              };
+            case "up_to_date":
+              return { success: true, newToolState: toolState };
+            case "skipped":
+              return { success: true, newToolState: toolState };
+            case "error":
+              return { success: false, newToolState: undefined };
+            default:
+              result satisfies never;
+              throw new Error(`Unexpected result: ${JSON.stringify(result)}`);
+          }
+        },
+      ),
+    );
 
-  view.finish();
+    const newState: State = {
+      tools: results
+        .map(({ newToolState }) => newToolState)
+        .filter((state): state is ToolState => state !== undefined),
+    };
 
-  return {
-    success: results.every(({ success }) => success),
-    newState,
-  };
+    return {
+      success: results.every(({ success }) => success),
+      newState,
+    };
+  } finally {
+    view.finish();
+  }
 }

@@ -3,7 +3,7 @@ import { installAllPackages } from "./src/packages/mod.ts";
 import { getBinDir, getCompletionsDir } from "./src/path.ts";
 import { loadState, saveState } from "./src/state/mod.ts";
 import { withTempDir } from "./src/utils/temp.ts";
-import { ConsoleView } from "./src/view/mod.ts";
+import { ProgressView } from "./src/view/mod.ts";
 
 const config = await loadConfig();
 const state = await loadState();
@@ -17,7 +17,7 @@ const success = withTempDir(
       getCompletionsDir(),
       config,
       state,
-      new ConsoleView(),
+      new ProgressView(),
     );
     await saveState(newState);
     return success;

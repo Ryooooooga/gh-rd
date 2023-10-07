@@ -2,6 +2,7 @@ import { assertEquals } from "std/assert/assert_equals.ts";
 import { stub } from "std/testing/mock.ts";
 import {
   getBinDir,
+  getCompletionsDir,
   getConfigPath,
   getPackageDir,
   getPackagesDir,
@@ -96,6 +97,37 @@ Deno.test(async function testPaths(t) {
       },
       fn: getBinDir,
       extected: "/home/alan/.local/share/gh-rd/bin",
+    },
+    // getCompletionsDir
+    {
+      description:
+        'getCompletionsDir returns "$GHRD_DATA_HOME/completions" if set',
+      env: {
+        GHRD_DATA_HOME: "/home/alan/.ghrd",
+        XDG_DATA_HOME: "/home/alan/.local/share",
+        HOME: "/home/alan",
+      },
+      fn: getCompletionsDir,
+      extected: "/home/alan/.ghrd/completions",
+    },
+    {
+      description:
+        'getCompletionsDir returns "$XDG_DATA_HOME/gh-rd/completions" if set',
+      env: {
+        XDG_DATA_HOME: "/home/alan/Library/Application Support",
+        HOME: "/home/alan",
+      },
+      fn: getCompletionsDir,
+      extected: "/home/alan/Library/Application Support/gh-rd/completions",
+    },
+    {
+      description:
+        'getCompletionsDir returns "$HOME/.local/share/gh-rd/completions" if by default',
+      env: {
+        HOME: "/home/alan",
+      },
+      fn: getCompletionsDir,
+      extected: "/home/alan/.local/share/gh-rd/completions",
     },
     // getPackagesDir
     {

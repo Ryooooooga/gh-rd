@@ -6,6 +6,7 @@ Deno.test(async function testFindAssetURL(t) {
     description: string;
     input: {
       artifactURLs: ReadonlyArray<string>;
+      use?: string;
     };
     expected: {
       linux_x86_64: string | undefined;
@@ -189,6 +190,13 @@ Deno.test(async function testFindAssetURL(t) {
       "https://github.com/x-motemen/ghq/releases/download/v1.4.2/ghq_windows_arm64.zip",
       "https://github.com/x-motemen/ghq/releases/download/v1.4.2/SHASUMS",
     ],
+    "neovim/neovim": [
+      "https://github.com/x-motemen/ghq/releases/download/stable/nvim-linux64.tar.gz",
+      "https://github.com/x-motemen/ghq/releases/download/stable/nvim-macos.tar.gz",
+      "https://github.com/x-motemen/ghq/releases/download/stable/nvim-win64.zip",
+      "https://github.com/x-motemen/ghq/releases/download/stable/nvim.appimage",
+      "https://github.com/x-motemen/ghq/releases/download/stable/nvim.appimage.zsync",
+    ],
   };
 
   const tests: ReadonlyArray<Test> = [
@@ -334,6 +342,23 @@ Deno.test(async function testFindAssetURL(t) {
           "https://github.com/x-motemen/ghq/releases/download/v1.4.2/ghq_darwin_arm64.zip",
       },
     },
+    {
+      description: "neovim/neovim with use",
+      input: {
+        artifactURLs: downloads["neovim/neovim"],
+        use: "*.appimage",
+      },
+      expected: {
+        linux_x86_64:
+          "https://github.com/x-motemen/ghq/releases/download/stable/nvim.appimage",
+        linux_aarch64:
+          "https://github.com/x-motemen/ghq/releases/download/stable/nvim.appimage",
+        darwin_x86_64:
+          "https://github.com/x-motemen/ghq/releases/download/stable/nvim.appimage",
+        darwin_aarch64:
+          "https://github.com/x-motemen/ghq/releases/download/stable/nvim.appimage",
+      },
+    },
   ];
 
   for (const s of tests) {
@@ -341,6 +366,7 @@ Deno.test(async function testFindAssetURL(t) {
       assertEquals(
         findAssetURL(
           s.input.artifactURLs,
+          s.input.use,
           "linux",
           "x86_64",
         ),
@@ -350,6 +376,7 @@ Deno.test(async function testFindAssetURL(t) {
       assertEquals(
         findAssetURL(
           s.input.artifactURLs,
+          s.input.use,
           "linux",
           "aarch64",
         ),
@@ -358,6 +385,7 @@ Deno.test(async function testFindAssetURL(t) {
       assertEquals(
         findAssetURL(
           s.input.artifactURLs,
+          s.input.use,
           "darwin",
           "x86_64",
         ),
@@ -366,6 +394,7 @@ Deno.test(async function testFindAssetURL(t) {
       assertEquals(
         findAssetURL(
           s.input.artifactURLs,
+          s.input.use,
           "darwin",
           "aarch64",
         ),

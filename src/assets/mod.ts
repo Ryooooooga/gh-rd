@@ -27,7 +27,7 @@ export function findAssetURL(
   const rules: MatchRule[] = [
     // Ignore junk files
     {
-      pattern: /(sha256|\.apk|\.deb|\.msi|\.rpm|\.sh|\.txt)$/i,
+      pattern: /(sha256|sha256sum|\.apk|\.deb|\.msi|\.rpm|\.sh|\.txt)$/i,
       score: -10000,
     },
     // Give priority to the archive file
@@ -139,12 +139,14 @@ export async function extractArchive(
 
   const archiveType = getArchiveTypeFromPath(archivePath);
   switch (archiveType) {
-    case null:
+    case null: {
       await Deno.copyFile(
         archivePath,
         `${destinationPath}/${basename(archivePath)}`,
       );
       break;
+    }
+
     case ".tar.gz": {
       const { success } = await runCommand(
         "tar",

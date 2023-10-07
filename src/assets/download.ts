@@ -1,12 +1,12 @@
 import { dirname } from "std/path/mod.ts";
 
-export async function downloadAsset(
+export async function downloadReleasedAsset(
   assetURL: string,
   destinationPath: string,
 ) {
   const res = await fetch(assetURL);
   if (!res.ok) {
-    throw new Error(`Failed to download asset from '${assetURL}'`);
+    throw new Error(`Failed to download asset '${assetURL}'`);
   }
 
   await Deno.mkdir(dirname(destinationPath), { recursive: true });

@@ -9,10 +9,12 @@ function getArchiveTypeFromPath(archivePath: string): ArchiveType | undefined {
   return archiveTypes.find((type) => filename.endsWith(type));
 }
 
+type RunCommand = typeof runCommand;
+
 async function runCommand(
   cmd: string,
   ...args: string[]
-): Promise<Deno.CommandOutput> {
+): Promise<Deno.CommandStatus> {
   return await new Deno.Command(cmd, {
     args,
     stdout: "inherit",
@@ -20,16 +22,22 @@ async function runCommand(
   }).output();
 }
 
+type CopyFile = typeof Deno.copyFile;
+type Mkdir = typeof Deno.mkdir;
+
 export async function extractArchive(
   archivePath: string,
   destinationPath: string,
+  runCommandFn: RunCommand = runCommand,
+  mkdirFn: Mkdir = Deno.mkdir,
+  copyFileFn: CopyFile = Deno.copyFile,
 ) {
-  await Deno.mkdir(destinationPath, { recursive: true });
+  await mkdirFn(destinationPath, { recursive: true });
 
   const archiveType = getArchiveTypeFromPath(archivePath);
   switch (archiveType) {
     case undefined: {
-      await Deno.copyFile(
+      await copyFileFn(
         archivePath,
         `${destinationPath}/${basename(archivePath)}`,
       );
@@ -37,7 +45,7 @@ export async function extractArchive(
     }
 
     case ".tar.gz": {
-      const { success } = await runCommand(
+      const { success } = await runCommandFn(
         "tar",
         "-zxf",
         archivePath,
@@ -51,7 +59,7 @@ export async function extractArchive(
     }
 
     case ".zip": {
-      const { success } = await runCommand(
+      const { success } = await runCommandFn(
         "unzip",
         "-joq",
         archivePath,

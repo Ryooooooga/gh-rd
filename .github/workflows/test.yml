@@ -11,7 +11,7 @@ jobs:
           - vx.x.x # latest stable
           - "~1.37" # lock v3
 
-    name: Test ${{ matrix.deno-version }}
+    name: Test - Deno ${{ matrix.deno-version }}
     runs-on: ubuntu-latest
 
     steps:
@@ -27,10 +27,42 @@ jobs:
         uses: actions/cache@v2
         with:
           path: ~/.cache/deno
-          key: ${{ runner.os }}-deno-${{ matrix.deno-version }}-${{ hashFiles('**/lock.json') }}
+          key: ${{ runner.os }}-deno-${{ matrix.deno-version }}-${{ hashFiles('**/*') }}
 
       - name: Test
         run: deno task test
+
+  integration-test:
+    strategy:
+      fail-fast: false
+      matrix:
+        os:
+          - ubuntu-latest
+          - macos-latest
+        deno-version:
+          - vx.x.x # latest stable
+          - "~1.37" # lock v3
+
+    name: Integration Test - ${{ matrix.os }} - Deno ${{ matrix.deno-version }}
+    runs-on: ${{ matrix.os }}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Deno ${{ matrix.deno-version }}
+        uses: denoland/setup-deno@v1
+        with:
+          deno-version: ${{ matrix.deno-version }}
+
+      - name: Cache
+        uses: actions/cache@v2
+        with:
+          path: ~/.cache/deno
+          key: ${{ runner.os }}-deno-${{ matrix.deno-version }}-${{ hashFiles('**/*') }}
+
+      - name: Test
+        run: bash ./test/integration.bash
 
   lint:
     strategy:

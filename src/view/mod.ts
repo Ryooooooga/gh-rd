@@ -146,7 +146,7 @@ export class ProgressView implements View {
   private updateBar(name: string, text: string): void {
     const bar = this.bars.find((bar) => bar.name === name);
     if (bar !== undefined) {
-      bar.text = text;
+      bar.text = text.padEnd(bar.text.length, " ");
     } else {
       this.bars.push({ name, text: text });
     }
@@ -161,10 +161,16 @@ export class ProgressView implements View {
     this.progressBars.render(this.bars.map(({ name, text }) => ({
       completed: 0,
       total: 100,
-      text: `${name.padEnd(nameLength, " ")}  ${text}`.padEnd(
-        Deno.consoleSize().columns,
-        " ",
-      ),
+      text: `${name.padEnd(nameLength, " ")}  ${text}`,
     })));
+  }
+}
+
+export function createView(): View {
+  console.log(Deno.isatty(Deno.stdout.rid));
+  if (Deno.isatty(Deno.stdout.rid)) {
+    return new ProgressView();
+  } else {
+    return new ConsoleView();
   }
 }

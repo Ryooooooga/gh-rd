@@ -11,6 +11,7 @@ export type InstallationState = Readonly<
   | { type: "renaming_files" }
   | { type: "linking_executables" }
   | { type: "linking_completions" }
+  | { type: "linking_manuals" }
   // Completed states
   | { type: "completed"; tag: string }
   | { type: "skipped" }
@@ -49,6 +50,8 @@ export class ConsoleView implements View {
       case "linking_executables":
         break;
       case "linking_completions":
+        break;
+      case "linking_manuals":
         break;
       case "completed":
         console.log(`Install completed '${name}' (${state.tag})`);
@@ -119,6 +122,8 @@ export class ProgressView implements View {
       case "linking_executables":
         break;
       case "linking_completions":
+        break;
+      case "linking_manuals":
         break;
       case "completed":
         this.updateBar(

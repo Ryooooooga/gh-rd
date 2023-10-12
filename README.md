@@ -14,6 +14,7 @@ GitHub Releases binaries installer.
 $ curl -fsSL https://raw.githubusercontent.com/Ryooooooga/gh-rd/main/install.bash | /bin/bash
 $ export PATH="${XDG_DATA_HOME:-$HOME/.local/share}/gh-rd/bin:$PATH"
 $ export FPATH="${XDG_DATA_HOME:-$HOME/.local/share}/gh-rd/completions:$FPATH"
+$ export MANPATH="${XDG_DATA_HOME:-$HOME/.local/share}/gh-rd/man:$MANPATH"
 ```
 
 Install as [`gh`](github.com/cli/cli) extension:
@@ -22,6 +23,7 @@ Install as [`gh`](github.com/cli/cli) extension:
 $ gh extension install Ryooooooga/gh-rd
 $ export PATH="${XDG_DATA_HOME:-$HOME/.local/share}/gh-rd/bin:$PATH"
 $ export FPATH="${XDG_DATA_HOME:-$HOME/.local/share}/gh-rd/completions:$FPATH"
+$ export MANPATH="${XDG_DATA_HOME:-$HOME/.local/share}/gh-rd/man:$MANPATH"
 ```
 
 ## Usage

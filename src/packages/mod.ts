@@ -126,15 +126,6 @@ function defaultExecutables(
   ];
 }
 
-function defaultCompletions(
-  _user: string,
-  _repo: string,
-): ReadonlyArray<CompletionConfig> {
-  return [
-    { glob: `**/_*`, exclude: ["**/_*.*"] },
-  ];
-}
-
 async function linkExecutables(
   config: ToolConfig,
   user: string,
@@ -185,6 +176,15 @@ async function linkExecutables(
   );
 }
 
+function defaultCompletions(
+  _user: string,
+  _repo: string,
+): ReadonlyArray<CompletionConfig> {
+  return [
+    { glob: `**/_*`, exclude: ["**/_*.*"] },
+  ];
+}
+
 async function linkCompletions(
   config: ToolConfig,
   user: string,
@@ -221,6 +221,52 @@ async function linkCompletions(
     }),
   );
 }
+
+function defaultManuals(
+  _user: string,
+  _repo: string,
+): ReadonlyArray<CompletionConfig> {
+  return [
+    { glob: `**/*.[1-9]` },
+  ];
+}
+
+async function linkManuals(
+  config: ToolConfig,
+  user: string,
+  repo: string,
+  packageDir: string,
+  manualsDir: string,
+  onUpdate: InstallationStateUpdateHandler,
+): Promise<void> {
+  onUpdate({ type: "linking_manuals" });
+
+  const files: Record<string, string> = {};
+
+  const manuals = config.manuals ??
+    defaultManuals(user, repo);
+
+  for (const { glob, exclude } of manuals) {
+    const entries = expandGlob(glob, {
+      root: packageDir,
+      includeDirs: false,
+      exclude: exclude !== undefined ? [...exclude] : undefined,
+    });
+    for await (const { path } of entries) {
+      files[basename(path)] = path;
+    }
+  }
+
+  await Promise.all(
+    Object.entries(files).map(async ([as, path]) => {
+      const destination = `${manualsDir}/man${as[as.length - 1]}/${as}`;
+      await Deno.mkdir(dirname(destination), { recursive: true });
+      await Deno.remove(destination).catch(() => {});
+      await Deno.symlink(path, destination);
+    }),
+  );
+}
+
 type InstallationResult =
   | { type: "installed"; tag: string }
   | { type: "up_to_date"; tag: string }
@@ -241,6 +287,7 @@ async function installPackage(
   tempDir: string,
   binDir: string,
   completionsDir: string,
+  manualsDir: string,
   config: ToolConfig,
   state: ToolState | undefined,
   onUpdate: InstallationStateUpdateHandler,
@@ -294,6 +341,15 @@ async function installPackage(
       onUpdate,
     );
 
+    await linkManuals(
+      config,
+      user,
+      repo,
+      packageDir,
+      manualsDir,
+      onUpdate,
+    );
+
     onUpdate({ type: "completed", tag });
     return { type: "installed", tag };
   } catch (err) {
@@ -306,6 +362,7 @@ export async function installAllPackages(
   tempDir: string,
   binDir: string,
   completionsDir: string,
+  manualsDir: string,
   config: Config,
   currentState: State,
   view: View,
@@ -334,6 +391,7 @@ export async function installAllPackages(
             tempDir,
             binDir,
             completionsDir,
+            manualsDir,
             toolConfig,
             toolState,
             (state) => view.update(toolConfig.name, state),

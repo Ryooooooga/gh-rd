@@ -10,6 +10,7 @@ export type ToolConfig = Readonly<{
   rename?: ReadonlyArray<RenameConfig> | undefined;
   executables?: ReadonlyArray<ExecutableConfig> | undefined;
   completions?: ReadonlyArray<CompletionConfig> | undefined;
+  manuals?: ReadonlyArray<ManualConfig> | undefined;
 
   onDownload?: ((event: DownloadEvent) => Promise<void>) | undefined;
 }>;
@@ -29,6 +30,11 @@ export type CompletionConfig = Readonly<{
   glob: string;
   exclude?: ReadonlyArray<string> | undefined;
   as?: string | undefined;
+}>;
+
+export type ManualConfig = Readonly<{
+  glob: string;
+  exclude?: ReadonlyArray<string> | undefined;
 }>;
 
 export type DownloadEvent = {

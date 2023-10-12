@@ -29,6 +29,10 @@ export function getCompletionsDir(): string {
   return `${getDataHomePath()}/completions`;
 }
 
+export function getManualsDir(): string {
+  return `${getDataHomePath()}/man`;
+}
+
 export function getPackagesDir(): string {
   return `${getDataHomePath()}/packages`;
 }

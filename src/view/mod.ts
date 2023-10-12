@@ -167,7 +167,6 @@ export class ProgressView implements View {
 }
 
 export function createView(): View {
-  console.log(Deno.isatty(Deno.stdout.rid));
   if (Deno.isatty(Deno.stdout.rid)) {
     return new ProgressView();
   } else {

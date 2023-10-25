@@ -18,12 +18,12 @@ export GHRD_CONFIG_FILE="$DIR/config.ts"
 export GHRD_DATA_HOME="$DIR/tmp/local/share/gh-rd"
 export GHRD_STATE_HOME="$DIR/tmp/local/state/gh-rd"
 
-function test-command() {
+test-command() {
   local cmd="$1"
   [[ "$(command -v "$cmd")" = "$GHRD_DATA_HOME/bin/$cmd" ]]
 }
 
-function test-completion() {
+test-completion() {
   local cmd="$1"
   [[ -f "$GHRD_DATA_HOME/completions/_$cmd" ]]
 }

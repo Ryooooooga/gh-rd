@@ -1,4 +1,4 @@
-import { basename } from "std/path/mod.ts";
+import { basename } from "../deps/std/path.ts";
 
 const archiveTypes = [".tar.gz", ".zip"] as const;
 

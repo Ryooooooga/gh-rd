@@ -1,4 +1,4 @@
-import { assertEquals } from "std/assert/mod.ts";
+import { assertEquals } from "../deps/std/testing.ts";
 import { findAssetURL } from "./file.ts";
 
 Deno.test(async function testFindAssetURL(t) {

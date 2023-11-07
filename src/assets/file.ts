@@ -1,4 +1,4 @@
-import { basename, globToRegExp } from "std/path/mod.ts";
+import { basename, globToRegExp } from "../deps/std/path.ts";
 
 export type OS = typeof Deno.build.os;
 export type Arch = typeof Deno.build.arch;

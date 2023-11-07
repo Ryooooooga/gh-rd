@@ -1,5 +1,5 @@
-import { dirname } from "std/path/mod.ts";
-import * as YAML from "std/yaml/mod.ts";
+import { dirname } from "../deps/std/path.ts";
+import * as YAML from "../deps/std/yaml.ts";
 import { getStatePath } from "../path.ts";
 import { State } from "./types.ts";
 

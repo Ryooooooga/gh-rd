@@ -1,5 +1,4 @@
-import { assertEquals } from "std/assert/assert_equals.ts";
-import { stub } from "std/testing/mock.ts";
+import { assertEquals, stub } from "./deps/std/testing.ts";
 import {
   getBinDir,
   getCompletionsDir,

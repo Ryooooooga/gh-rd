@@ -1,10 +1,4 @@
 {
-  "imports": {
-    "std/": "https://deno.land/std@0.203.0/",
-    "deno_dom/": "https://deno.land/x/deno_dom@v0.1.41/",
-    "cliffy/": "https://deno.land/x/cliffy@v1.0.0-rc.3/",
-    "progress/": "https://deno.land/x/progress@v1.3.9/"
-  },
   "tasks": {
     "start": "deno run --allow-read --allow-write --allow-net --allow-env --allow-run main.ts",
     "dev": "deno run --watch --allow-read --allow-write --allow-net --allow-env --allow-run main.ts",

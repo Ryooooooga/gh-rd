@@ -1,5 +1,5 @@
-import { expandGlob } from "std/fs/mod.ts";
-import { basename, dirname } from "std/path/mod.ts";
+import { expandGlob } from "../deps/std/fs.ts";
+import { basename, dirname } from "../deps/std/path.ts";
 import {
   downloadReleasedAsset,
   extractArchive,

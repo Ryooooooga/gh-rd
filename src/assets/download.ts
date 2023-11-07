@@ -1,4 +1,4 @@
-import { dirname } from "std/path/mod.ts";
+import { dirname } from "../deps/std/path.ts";
 
 export async function downloadReleasedAsset(
   assetURL: string,

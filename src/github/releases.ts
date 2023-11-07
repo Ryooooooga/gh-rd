@@ -1,4 +1,4 @@
-import { DOMParser } from "deno_dom/deno-dom-wasm.ts";
+import { DOMParser } from "../deps/deno_dom.ts";
 
 export const GITHUB_BASE_URL = "https://github.com";
 

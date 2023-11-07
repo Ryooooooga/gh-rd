@@ -1,5 +1,5 @@
-import { basename } from "std/path/mod.ts";
-import { MultiProgressBar } from "progress/mod.ts";
+import { basename } from "../deps/std/path.ts";
+import { MultiProgressBar } from "../deps/progress.ts";
 import { ToolConfig } from "../config/mod.ts";
 
 export type InstallationState = Readonly<

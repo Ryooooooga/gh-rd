@@ -1,5 +1,9 @@
-import { assertEquals, assertRejects } from "std/assert/mod.ts";
-import { assertSpyCalls, stub } from "std/testing/mock.ts";
+import {
+  assertEquals,
+  assertRejects,
+  assertSpyCalls,
+  stub,
+} from "../deps/std/testing.ts";
 import {
   fetchLatestReleaseTag,
   fetchReleasedArtifactURLs,

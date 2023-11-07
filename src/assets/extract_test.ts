@@ -1,4 +1,4 @@
-import { assertSpyCall, assertSpyCalls, spy } from "std/testing/mock.ts";
+import { assertSpyCall, assertSpyCalls, spy } from "../deps/std/testing.ts";
 import { extractArchive } from "./extract.ts";
 
 Deno.test(async function testExtractArchive(t) {

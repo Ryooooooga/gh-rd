@@ -122,7 +122,8 @@ function defaultExecutables(
   repo: string,
 ): ReadonlyArray<ExecutableConfig> {
   return [
-    { glob: `**/${repo}`, as: repo },
+    { glob: `**/${repo}` },
+    { glob: `**/bin/*` },
   ];
 }
 

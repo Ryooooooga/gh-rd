@@ -61,7 +61,7 @@ export async function extractArchive(
     case ".zip": {
       const { success } = await runCommandFn(
         "unzip",
-        "-joq",
+        "-oq",
         archivePath,
         "-d",
         destinationPath,

@@ -58,7 +58,7 @@ Deno.test(async function testExtractArchive(t) {
     );
 
     assertSpyCall(mockRunCommand, 0, {
-      args: ["unzip", "-joq", archivePath, "-d", destinationPath],
+      args: ["unzip", "-oq", archivePath, "-d", destinationPath],
     });
     assertSpyCall(mockMkdir, 0, {
       args: [destinationPath, { recursive: true }],

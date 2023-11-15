@@ -10,6 +10,7 @@ import {
   Config,
   ExecutableConfig,
   RenameConfig,
+  Shell,
   ToolConfig,
 } from "../config/mod.ts";
 import {
@@ -178,16 +179,57 @@ async function linkExecutables(
 }
 
 function defaultCompletions(
+  shell: Shell,
   _user: string,
   _repo: string,
 ): ReadonlyArray<CompletionConfig> {
+  function shellExt(shell: Shell): string {
+    switch (shell) {
+      case "zsh":
+        return ".zsh";
+      case "bash":
+        return ".bash";
+      case "fish":
+        return ".fish";
+      case "powershell":
+        return ".ps1";
+      default:
+        return "";
+    }
+  }
+
   return [
-    { glob: `**/_*`, exclude: ["**/_*.*"] },
+    {
+      glob: `**/_*`,
+      exclude: ["**/_*.*"],
+    },
+    {
+      glob: `**/{autocomplete,complete,completion,completions}/*${
+        shellExt(shell)
+      }`,
+      exclude: [],
+    },
   ];
+}
+
+function defaultCompletionName(path: string): string {
+  let name = basename(path);
+
+  const dotIndex = name.indexOf(".");
+  if (dotIndex > 0) {
+    name = name.slice(0, dotIndex);
+  }
+
+  if (name.startsWith("_")) {
+    return name;
+  }
+
+  return `_${name}`;
 }
 
 async function linkCompletions(
   config: ToolConfig,
+  shell: Shell,
   user: string,
   repo: string,
   packageDir: string,
@@ -199,7 +241,7 @@ async function linkCompletions(
   const files: Record<string, string> = {};
 
   const completions = config.completions ??
-    defaultCompletions(user, repo);
+    defaultCompletions(shell, user, repo);
 
   for (const { glob, exclude, as } of completions) {
     const entries = expandGlob(glob, {
@@ -208,7 +250,10 @@ async function linkCompletions(
       exclude: exclude !== undefined ? [...exclude] : undefined,
     });
     for await (const { path } of entries) {
-      files[as ?? basename(path)] = path;
+      const name = as ?? defaultCompletionName(path);
+      if (!(name in files)) {
+        files[name] = path;
+      }
     }
   }
 
@@ -254,7 +299,10 @@ async function linkManuals(
       exclude: exclude !== undefined ? [...exclude] : undefined,
     });
     for await (const { path } of entries) {
-      files[basename(path)] = path;
+      const name = basename(path);
+      if (!(name in files)) {
+        files[name] = path;
+      }
     }
   }
 
@@ -290,6 +338,7 @@ async function installPackage(
   completionsDir: string,
   manualsDir: string,
   config: ToolConfig,
+  shell: Shell,
   state: ToolState | undefined,
   onUpdate: InstallationStateUpdateHandler,
 ): Promise<InstallationResult> {
@@ -335,6 +384,7 @@ async function installPackage(
 
     await linkCompletions(
       config,
+      shell,
       user,
       repo,
       packageDir,
@@ -359,6 +409,38 @@ async function installPackage(
   }
 }
 
+function loginShell(): Shell {
+  function defaultShell(): Shell {
+    switch (Deno.build.os) {
+      case "windows":
+        return "powershell";
+      case "darwin":
+        return "zsh";
+      default:
+        return "bash";
+    }
+  }
+
+  const shellPath = Deno.env.get("SHELL");
+  if (shellPath === undefined) {
+    return defaultShell();
+  }
+
+  const shellName = basename(shellPath);
+  switch (shellName) {
+    case "zsh":
+      return "zsh";
+    case "bash":
+      return "bash";
+    case "fish":
+      return "fish";
+    case "pwsh":
+      return "powershell";
+    default:
+      return defaultShell();
+  }
+}
+
 export async function installAllPackages(
   tempDir: string,
   binDir: string,
@@ -378,6 +460,8 @@ export async function installAllPackages(
       currentState.tools.map((state) => [state.name, state]),
     );
 
+    const shell = config.shell ?? loginShell();
+
     const results = await Promise.all(
       config.tools.map(
         async (
@@ -394,6 +478,7 @@ export async function installAllPackages(
             completionsDir,
             manualsDir,
             toolConfig,
+            shell,
             toolState,
             (state) => view.update(toolConfig.name, state),
           );

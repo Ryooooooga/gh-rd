@@ -24,15 +24,10 @@ async function saveRemoteFile(
 }
 
 export default defineConfig({
+  shell: "zsh",
   tools: [
     {
       name: "rossmacarthur/sheldon",
-      completions: [
-        {
-          glob: "completions/sheldon.zsh",
-          as: "_sheldon",
-        },
-      ],
     },
     {
       name: "Ryooooooga/croque",
@@ -190,9 +185,6 @@ export default defineConfig({
     },
     {
       name: "sharkdp/bat",
-      completions: [
-        { glob: "*/autocomplete/bat.zsh", as: "_bat" },
-      ],
     },
     {
       name: "sharkdp/fd",

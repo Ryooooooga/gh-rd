@@ -1,6 +1,9 @@
 export type Config = Readonly<{
+  shell?: Shell;
   tools: ReadonlyArray<ToolConfig>;
 }>;
+
+export type Shell = "zsh" | "bash" | "fish" | "powershell";
 
 export type ToolConfig = Readonly<{
   name: `${string}/${string}`; // <user>/<repo>

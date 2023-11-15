@@ -91,7 +91,7 @@ export default defineConfig({
     {
       name: "BurntSushi/ripgrep",
       executables: [
-        { glob: "**/rg", as: "rg" },
+        { glob: "**/rg" },
       ],
     },
     {
@@ -156,7 +156,7 @@ export default defineConfig({
         { from: "tealdeer*", to: "tldr" },
       ],
       executables: [
-        { glob: "tldr", as: "tldr" },
+        { glob: "tldr" },
       ],
       async onDownload({ packageDir }) {
         await saveRemoteFile(
@@ -167,6 +167,9 @@ export default defineConfig({
     },
     {
       name: "himanoa/mdmg",
+      executables: [
+        { glob: "**/mdmg" },
+      ],
       async onDownload({ packageDir }) {
         await saveRemoteFile(
           `${packageDir}/_mdmg`,

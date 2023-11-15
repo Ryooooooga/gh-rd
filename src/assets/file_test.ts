@@ -212,7 +212,8 @@ Deno.test(async function testFindAssetURL(t) {
           "https://github.com/BurntSushi/ripgrep/releases/download/13.0.0/ripgrep-13.0.0-arm-unknown-linux-gnueabihf.tar.gz",
         darwin_x86_64:
           "https://github.com/BurntSushi/ripgrep/releases/download/13.0.0/ripgrep-13.0.0-x86_64-apple-darwin.tar.gz",
-        darwin_aarch64: undefined,
+        darwin_aarch64:
+          "https://github.com/BurntSushi/ripgrep/releases/download/13.0.0/ripgrep-13.0.0-x86_64-apple-darwin.tar.gz",
       },
     },
     {
@@ -259,7 +260,8 @@ Deno.test(async function testFindAssetURL(t) {
           "https://github.com/dbrgn/tealdeer/releases/download/v1.6.1/tealdeer-linux-arm-musleabi",
         darwin_x86_64:
           "https://github.com/dbrgn/tealdeer/releases/download/v1.6.1/tealdeer-macos-x86_64",
-        darwin_aarch64: undefined,
+        darwin_aarch64:
+          "https://github.com/dbrgn/tealdeer/releases/download/v1.6.1/tealdeer-macos-x86_64",
       },
     },
     {

@@ -198,16 +198,6 @@ export default defineConfig({
     {
       name: "neovim/neovim",
       enabled: Deno.build.arch === "x86_64",
-      use: (() => {
-        switch (Deno.build.os) {
-          case "darwin":
-            return "nvim-macos.tar.gz";
-          case "linux":
-            return "nvim-linux64.tar.gz";
-          default:
-            return undefined;
-        }
-      })(),
     },
   ],
 });

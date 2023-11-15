@@ -22,7 +22,7 @@ export function findAssetURL(
     score: number;
   };
 
-  const minScore = 200;
+  const minScore = 100;
 
   const rules: MatchRule[] = [
     // Ignore junk files
@@ -64,13 +64,13 @@ export function findAssetURL(
     case "x86_64":
       rules.push({
         pattern: /amd64|x86_64|x64/i,
-        score: 100,
+        score: 50,
       });
       break;
     case "aarch64":
       rules.push({
         pattern: /arm(-|64)|aarch64/i,
-        score: 100,
+        score: 50,
       });
       break;
     default:

@@ -103,7 +103,7 @@ async function renameFiles(
 ) {
   onUpdate({ type: "renaming_files" });
 
-  for (const { from, to } of renames) {
+  for (const { from, to, chmod } of renames) {
     const entries = expandGlob(from, {
       root: packageDir,
       includeDirs: true,
@@ -114,6 +114,10 @@ async function renameFiles(
 
       await Deno.mkdir(dirname(toPath), { recursive: true });
       await Deno.rename(fromPath, toPath);
+
+      if (chmod !== undefined) {
+        await Deno.chmod(toPath, chmod);
+      }
     }
   }
 }

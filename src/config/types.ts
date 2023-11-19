@@ -21,6 +21,7 @@ export type ToolConfig = Readonly<{
 export type RenameConfig = Readonly<{
   from: string;
   to: string;
+  chmod?: number | undefined;
 }>;
 
 export type ExecutableConfig = Readonly<{

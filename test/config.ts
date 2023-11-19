@@ -70,10 +70,9 @@ export default defineConfig({
     {
       name: "direnv/direnv",
       rename: [
-        { from: "direnv*", to: "direnv" },
+        { from: "direnv*", to: "direnv", chmod: 0o755 },
       ],
       async onDownload({ packageDir, bin }) {
-        await Deno.chmod(bin.direnv, 0o755);
         await saveCommandOutput(
           `${packageDir}/direnv.zsh`,
           bin.direnv,

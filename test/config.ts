@@ -81,9 +81,6 @@ export default defineConfig({
     },
     {
       name: "BurntSushi/ripgrep",
-      executables: [
-        { glob: "**/rg" },
-      ],
     },
     {
       name: "x-motemen/ghq",
@@ -113,7 +110,7 @@ export default defineConfig({
     {
       name: "mikefarah/yq",
       rename: [
-        { from: "yq_*", to: "yq" },
+        { from: "yq_*", to: "yq", chmod: 0o755 },
       ],
       async onDownload({ packageDir, bin: { yq } }) {
         await saveCommandOutput(
@@ -137,10 +134,7 @@ export default defineConfig({
     {
       name: "dbrgn/tealdeer",
       rename: [
-        { from: "tealdeer*", to: "tldr" },
-      ],
-      executables: [
-        { glob: "tldr" },
+        { from: "tealdeer*", to: "tldr", chmod: 0o755 },
       ],
       async onDownload({ packageDir }) {
         await saveRemoteFile(

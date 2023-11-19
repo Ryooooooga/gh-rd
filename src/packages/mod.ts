@@ -1,5 +1,5 @@
 import { expandGlob } from "../deps/std/fs.ts";
-import { basename, dirname } from "../deps/std/path.ts";
+import { basename, dirname, extname } from "../deps/std/path.ts";
 import {
   downloadReleasedAsset,
   extractArchive,
@@ -25,7 +25,17 @@ type InstallationStateUpdateHandler = (state: InstallationState) => void;
 
 async function isDirectory(path: string): Promise<boolean> {
   try {
-    return (await Deno.stat(path)).isDirectory;
+    const stat = await Deno.stat(path);
+    return stat.isDirectory;
+  } catch (_err) {
+    return false;
+  }
+}
+
+async function isExecutable(path: string): Promise<boolean> {
+  try {
+    const stat = await Deno.stat(path);
+    return stat.isFile && stat.mode !== null && (stat.mode & 0o111) !== 0;
   } catch (_err) {
     return false;
   }
@@ -130,8 +140,22 @@ function defaultExecutables(
     (Deno.build.os === "linux" && Deno.env.has("WSLENV"));
 
   return [
-    { glob: `**/${repo}${isWindows ? "{.exe,}" : ""}` },
-    { glob: `**/bin/*` },
+    {
+      glob: "**/*",
+      async match({ name, path }) {
+        if (
+          (name === repo) ||
+          (isWindows && name.endsWith(".exe"))
+        ) {
+          return true;
+        }
+
+        return extname(name) === "" && await isExecutable(path);
+      },
+    },
+    {
+      glob: "**/bin/*",
+    },
   ];
 }
 
@@ -151,14 +175,16 @@ async function linkExecutables(
   const executables = config.executables ??
     defaultExecutables(user, repo);
 
-  for (const { glob, exclude, as } of executables) {
+  for (const { glob, exclude, match, as } of executables) {
     const entries = expandGlob(glob, {
       root: packageDir,
       includeDirs: false,
       exclude: exclude !== undefined ? [...exclude] : undefined,
     });
-    for await (const { path } of entries) {
-      bin[as ?? basename(path)] = path;
+    for await (const entry of entries) {
+      if (match === undefined || await match(entry)) {
+        bin[as ?? entry.name] = entry.path;
+      }
     }
   }
 

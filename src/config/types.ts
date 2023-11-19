@@ -1,3 +1,5 @@
+import { WalkEntry } from "../deps/std/fs.ts";
+
 export type Config = Readonly<{
   shell?: Shell;
   tools: ReadonlyArray<ToolConfig>;
@@ -27,6 +29,7 @@ export type RenameConfig = Readonly<{
 export type ExecutableConfig = Readonly<{
   glob: string;
   exclude?: ReadonlyArray<string> | undefined;
+  match?: (entry: WalkEntry) => boolean | Promise<boolean> | undefined;
   as?: string | undefined;
 }>;
 

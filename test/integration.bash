@@ -29,12 +29,15 @@ test-completion() {
 }
 
 # Install gh-rd
-/bin/bash "$DIR/../install.bash"
-[[ -n "${GITHUB_SHA:-}" ]] && git -C "$GHRD_DATA_HOME/src" switch -d "$GITHUB_SHA"
+if [[ -n "${GITHUB_SHA:-}" ]]; then
+  /bin/bash "$DIR/../install.bash"
+  git -C "$GHRD_DATA_HOME/src" switch -d "$GITHUB_SHA"
 
-export PATH="$GHRD_DATA_HOME/bin:$PATH"
-
-test-command gh-rd
+  export PATH="$GHRD_DATA_HOME/bin:$PATH"
+  test-command gh-rd
+else
+  export PATH="$DIR/..:$GHRD_DATA_HOME/bin:$PATH"
+fi
 
 # Install binaries
 gh-rd

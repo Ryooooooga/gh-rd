@@ -126,8 +126,11 @@ function defaultExecutables(
   _user: string,
   repo: string,
 ): ReadonlyArray<ExecutableConfig> {
+  const isWindows = Deno.build.os === "windows" ||
+    (Deno.build.os === "linux" && Deno.env.has("WSLENV"));
+
   return [
-    { glob: `**/${repo}` },
+    { glob: `**/${repo}${isWindows ? "{.exe,}" : ""}` },
     { glob: `**/bin/*` },
   ];
 }

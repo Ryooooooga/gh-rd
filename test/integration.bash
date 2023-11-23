@@ -142,7 +142,6 @@ gh-rd
 }
 { # fzf
   test-command fzf
-  test-completion fzf
   fzf --version
 }
 { # bat

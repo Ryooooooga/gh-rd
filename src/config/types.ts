@@ -1,4 +1,5 @@
-import { WalkEntry } from "../deps/std/fs.ts";
+import type { WalkEntry } from "../deps/std/fs.ts";
+import type { $ } from "../deps/zx.ts";
 
 export type Config = Readonly<{
   shell?: Shell;
@@ -49,6 +50,7 @@ export type DownloadEvent = {
   tag: string;
   packageDir: string;
   bin: Readonly<Record<string, string>>;
+  $: typeof $;
 };
 
 export function defineConfig(config: Config): Config {

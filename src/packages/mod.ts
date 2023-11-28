@@ -189,22 +189,21 @@ async function linkExecutables(
     }
   }
 
-  if (config.onDownload !== undefined) {
+  const onDownload = config.onDownload;
+  if (onDownload !== undefined) {
     await within(async () => {
       $.verbose = false;
       $.cwd = packageDir;
 
-      if (config.onDownload !== undefined) {
-        await config.onDownload({
-          name: config.name,
-          tag,
-          packageDir,
-          bin,
-          $,
-        }).catch((err) => {
-          console.error(err);
-        });
-      }
+      await onDownload({
+        name: config.name,
+        tag,
+        packageDir,
+        bin,
+        $,
+      }).catch((err) => {
+        console.error(err);
+      });
     });
   }
 

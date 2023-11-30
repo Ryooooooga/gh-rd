@@ -166,3 +166,9 @@ gh-rd
     ! test-command nvim
   fi
 }
+{ # ldc2
+  test-command rdmd
+  rdmd --help
+
+  ! test-command ldc2
+}

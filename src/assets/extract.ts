@@ -1,6 +1,6 @@
 import { basename } from "../deps/std/path.ts";
 
-const archiveTypes = [".tar.gz", ".zip"] as const;
+const archiveTypes = [".tar.gz", ".tar.xz", ".zip"] as const;
 
 type ArchiveType = typeof archiveTypes[number];
 
@@ -48,6 +48,20 @@ export async function extractArchive(
       const { success } = await runCommandFn(
         "tar",
         "-zxf",
+        archivePath,
+        "-C",
+        destinationPath,
+      );
+      if (!success) {
+        throw new Error(`Failed to extract '${archivePath}'`);
+      }
+      break;
+    }
+
+    case ".tar.xz": {
+      const { success } = await runCommandFn(
+        "tar",
+        "-Jxf",
         archivePath,
         "-C",
         destinationPath,

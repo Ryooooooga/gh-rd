@@ -138,5 +138,11 @@ export default defineConfig({
       name: "neovim/neovim",
       enabled: Deno.build.arch === "x86_64",
     },
+    {
+      name: "ldc-developers/ldc",
+      executables: [
+        { glob: "**/rdmd" },
+      ],
+    },
   ],
 });

@@ -314,7 +314,7 @@ function defaultManuals(
   _repo: string,
 ): ReadonlyArray<CompletionConfig> {
   return [
-    { glob: `**/*.[1-9]` },
+    { glob: `**/*.[1-9]`, exclude: ["**/*.so.*"] },
   ];
 }
 

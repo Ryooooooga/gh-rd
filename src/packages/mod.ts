@@ -20,7 +20,6 @@ import {
 import { getPackageDir } from "../path.ts";
 import { State, ToolState } from "../state/mod.ts";
 import { InstallationState, View } from "../view/mod.ts";
-import { $, within } from "../deps/zx.ts";
 
 type InstallationStateUpdateHandler = (state: InstallationState) => void;
 
@@ -189,21 +188,14 @@ async function linkExecutables(
     }
   }
 
-  const onDownload = config.onDownload;
-  if (onDownload !== undefined) {
-    await within(async () => {
-      $.verbose = false;
-      $.cwd = packageDir;
-
-      await onDownload({
-        name: config.name,
-        tag,
-        packageDir,
-        bin,
-        $,
-      }).catch((err) => {
-        console.error(err);
-      });
+  if (config.onDownload !== undefined) {
+    await config.onDownload({
+      name: config.name,
+      tag,
+      packageDir,
+      bin,
+    }).catch((err) => {
+      console.error(err);
     });
   }
 

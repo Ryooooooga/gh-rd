@@ -1,10 +1,22 @@
 import { defineConfig } from "../src/config/types.ts";
 
+async function saveCommandOutput(
+  cmd: [string, ...string[]],
+  to: string,
+) {
+  const { stdout } = await new Deno.Command(cmd[0], {
+    args: cmd.slice(1),
+    stderr: "inherit",
+  }).output();
+
+  await Deno.writeFile(to, stdout);
+}
+
 async function saveRemoteFile(
   from: string,
   to: string,
 ) {
-  const res = await fetch(from);
+  const res = await fetch(new URL(from));
   if (res.body !== null) {
     await Deno.writeFile(to, res.body);
   }
@@ -18,20 +30,29 @@ export default defineConfig({
     },
     {
       name: "Ryooooooga/croque",
-      async onDownload({ bin: { croque }, $ }) {
-        await $`${croque} init zsh >croque.zsh`;
+      async onDownload({ packageDir, bin: { croque } }) {
+        await saveCommandOutput(
+          [croque, "init", "zsh"],
+          `${packageDir}/croque.zsh`,
+        );
       },
     },
     {
       name: "Ryooooooga/zabrze",
-      async onDownload({ bin: { zabrze }, $ }) {
-        await $`${zabrze} init --bind-keys >zabrze.zsh`;
+      async onDownload({ packageDir, bin: { zabrze } }) {
+        await saveCommandOutput(
+          [zabrze, "init", "--bind-keys"],
+          `${packageDir}/zabrze.zsh`,
+        );
       },
     },
     {
       name: "Ryooooooga/qwy",
-      async onDownload({ bin: { qwy }, $ }) {
-        await $`${qwy} init >qwy.zsh`;
+      async onDownload({ packageDir, bin: { qwy } }) {
+        await saveCommandOutput(
+          [qwy, "init"],
+          `${packageDir}/qwy.zsh`,
+        );
       },
     },
     {
@@ -45,8 +66,11 @@ export default defineConfig({
       rename: [
         { from: "direnv*", to: "direnv", chmod: 0o755 },
       ],
-      async onDownload({ bin: { direnv }, $ }) {
-        await $`${direnv} hook zsh >direnv.zsh`;
+      async onDownload({ packageDir, bin: { direnv } }) {
+        await saveCommandOutput(
+          [direnv, "hook", "zsh"],
+          `${packageDir}/direnv.zsh`,
+        );
       },
     },
     {
@@ -66,8 +90,11 @@ export default defineConfig({
     },
     {
       name: "cli/cli",
-      async onDownload({ bin: { gh }, $ }) {
-        await $`${gh} completion --shell zsh >_gh`;
+      async onDownload({ packageDir, bin: { gh } }) {
+        await saveCommandOutput(
+          [gh, "completion", "--shell", "zsh"],
+          `${packageDir}/_gh`,
+        );
       },
     },
     {
@@ -85,14 +112,20 @@ export default defineConfig({
       rename: [
         { from: "yq_*", to: "yq", chmod: 0o755 },
       ],
-      async onDownload({ bin: { yq }, $ }) {
-        await $`${yq} shell-completion zsh >_yq`;
+      async onDownload({ packageDir, bin: { yq } }) {
+        await saveCommandOutput(
+          [yq, "shell-completion", "zsh"],
+          `${packageDir}/_yq`,
+        );
       },
     },
     {
       name: "rhysd/hgrep",
-      async onDownload({ bin: { hgrep }, $ }) {
-        await $`${hgrep} --generate-completion-script zsh >_hgrep`;
+      async onDownload({ packageDir, bin: { hgrep } }) {
+        await saveCommandOutput(
+          [hgrep, "--generate-completion-script", "zsh"],
+          `${packageDir}/_hgrep`,
+        );
       },
     },
     {

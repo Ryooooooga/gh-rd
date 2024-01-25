@@ -31,7 +31,7 @@ $ export MANPATH="${XDG_DATA_HOME:-$HOME/.local/share}/gh-rd/man:$MANPATH"
 `~/.config/gh-rd/config.ts`:
 
 ```ts
-import { defineConfig } from "https://raw.githubusercontent.com/Ryooooooga/gh-rd/main/src/config.ts";
+import { defineConfig } from "https://raw.githubusercontent.com/Ryooooooga/gh-rd/main/src/config/types.ts";
 
 export default defineConfig({
   tools: [

@@ -172,7 +172,7 @@ export class ProgressView implements View {
 }
 
 export function createView(): View {
-  if (Deno.isatty(Deno.stdout.rid)) {
+  if (Deno.stdout.isTerminal()) {
     return new ProgressView();
   } else {
     return new ConsoleView();

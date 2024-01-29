@@ -56,6 +56,12 @@ export default defineConfig({
         { glob: "*/autocomplete/bat.zsh", as: "_bat" },
       ],
     },
+    {
+      name: "cli/cli",
+      async onDownload({ bin: { gh }, $ }) {
+        await $`${gh} completion --shell zsh >_gh`;
+      },
+    },
   ],
 });
 ```
@@ -66,6 +72,7 @@ Installing junegunn/fzf...
 Installing BurntSushi/ripgrep...
 Installing direnv/direnv...
 Installing sharkdp/bat...
+Installing cli/cli...
 ...
 
 $ where fzf

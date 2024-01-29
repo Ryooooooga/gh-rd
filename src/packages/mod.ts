@@ -17,6 +17,7 @@ import {
   fetchLatestReleaseTag,
   fetchReleasedArtifactURLs,
 } from "../github/mod.ts";
+import { build$, CommandBuilder } from "../deps/dax.ts";
 import { getPackageDir } from "../path.ts";
 import { State, ToolState } from "../state/mod.ts";
 import { InstallationState, View } from "../view/mod.ts";
@@ -189,11 +190,19 @@ async function linkExecutables(
   }
 
   if (config.onDownload !== undefined) {
+    const commandBuilder = new CommandBuilder()
+      .cwd(packageDir);
+
+    const $ = build$({
+      commandBuilder,
+    });
+
     await config.onDownload({
       name: config.name,
       tag,
       packageDir,
       bin,
+      $,
     }).catch((err) => {
       console.error(err);
     });

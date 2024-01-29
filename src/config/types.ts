@@ -1,3 +1,4 @@
+import { $Type } from "../deps/dax.ts";
 import { WalkEntry } from "../deps/std/fs.ts";
 
 export type Config = Readonly<{
@@ -49,6 +50,7 @@ export type DownloadEvent = {
   tag: string;
   packageDir: string;
   bin: Readonly<Record<string, string>>;
+  $: $Type;
 };
 
 export function defineConfig(config: Config): Config {

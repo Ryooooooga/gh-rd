@@ -1,4 +1,4 @@
-import { defineConfig } from "../src/config/types.ts";
+import { defineConfig } from "../mod.ts";
 
 export default defineConfig({
   shell: "zsh",

@@ -11,7 +11,7 @@ GitHub Releases binaries installer.
 ## Installation
 
 ```sh
-$ curl -fsSL https://raw.githubusercontent.com/Ryooooooga/gh-rd/main/install.bash | /bin/bash
+$ curl -fsSL https://deno.land/x/gh_rd/install.bash | /bin/bash
 $ export PATH="${XDG_DATA_HOME:-$HOME/.local/share}/gh-rd/bin:$PATH"
 $ export FPATH="${XDG_DATA_HOME:-$HOME/.local/share}/gh-rd/completions:$FPATH"
 $ export MANPATH="${XDG_DATA_HOME:-$HOME/.local/share}/gh-rd/man:$MANPATH"
@@ -31,7 +31,7 @@ $ export MANPATH="${XDG_DATA_HOME:-$HOME/.local/share}/gh-rd/man:$MANPATH"
 `~/.config/gh-rd/config.ts`:
 
 ```ts
-import { defineConfig } from "https://raw.githubusercontent.com/Ryooooooga/gh-rd/main/src/config/types.ts";
+import { defineConfig } from "https://deno.land/x/gh_rd/mod.ts";
 
 export default defineConfig({
   tools: [

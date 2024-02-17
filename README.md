@@ -14,7 +14,7 @@ GitHub Releases binaries installer.
 $ curl -fsSL https://deno.land/x/gh_rd/install.bash | /bin/bash
 $ export PATH="${XDG_DATA_HOME:-$HOME/.local/share}/gh-rd/bin:$PATH"
 $ export FPATH="${XDG_DATA_HOME:-$HOME/.local/share}/gh-rd/completions:$FPATH"
-$ export MANPATH="${XDG_DATA_HOME:-$HOME/.local/share}/gh-rd/man:$MANPATH"
+$ export MANPATH="${XDG_DATA_HOME:-$HOME/.local/share}/gh-rd/man:$MANPATH" # optional
 ```
 
 Install as [`gh`](https://github.com/cli/cli) extension:
@@ -23,7 +23,7 @@ Install as [`gh`](https://github.com/cli/cli) extension:
 $ gh extension install Ryooooooga/gh-rd
 $ export PATH="${XDG_DATA_HOME:-$HOME/.local/share}/gh-rd/bin:$PATH"
 $ export FPATH="${XDG_DATA_HOME:-$HOME/.local/share}/gh-rd/completions:$FPATH"
-$ export MANPATH="${XDG_DATA_HOME:-$HOME/.local/share}/gh-rd/man:$MANPATH"
+$ export MANPATH="${XDG_DATA_HOME:-$HOME/.local/share}/gh-rd/man:$MANPATH" # optional
 ```
 
 ## Usage

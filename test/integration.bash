@@ -28,6 +28,11 @@ test-completion() {
   [[ -f "$GHRD_DATA_HOME/completions/_$cmd" ]]
 }
 
+test-man() {
+  local man="$1"
+  [[ -f "$GHRD_DATA_HOME/man/$man" ]]
+}
+
 # Install gh-rd
 if [[ -n "${GITHUB_SHA:-}" ]]; then
   /bin/bash "$DIR/../install.bash"
@@ -105,6 +110,8 @@ gh-rd
 { # gh
   test-command gh
   test-completion gh
+  test-man man1/gh.1
+  test-man man1/gh-api.1
   gh --version
 }
 { # eza
@@ -152,6 +159,7 @@ gh-rd
 { # fd
   test-command fd
   test-completion fd
+  test-man man1/fd.1
   fd --version
 }
 { # tokei
@@ -171,4 +179,10 @@ gh-rd
   rdmd --help
 
   ! test-command ldc2
+}
+{ # gum
+  test-command gum
+  test-completion gum
+  test-man man1/gum.1.gz
+  gum --version
 }

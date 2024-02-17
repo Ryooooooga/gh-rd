@@ -315,7 +315,7 @@ function defaultManuals(
   _repo: string,
 ): ReadonlyArray<CompletionConfig> {
   return [
-    { glob: `**/*.[1-9]`, exclude: ["**/*.so.*"] },
+    { glob: `**/*.[1-9]?(.gz)`, exclude: ["**/*.so.*"] },
   ];
 }
 
@@ -350,7 +350,9 @@ async function linkManuals(
 
   await Promise.all(
     Object.entries(files).map(async ([as, path]) => {
-      const destination = `${manualsDir}/man${as[as.length - 1]}/${as}`;
+      const destination = `${manualsDir}/man${
+        as[as.length - (as.endsWith(".gz") ? 4 : 1)]
+      }/${as}`;
       await Deno.mkdir(dirname(destination), { recursive: true });
       await Deno.remove(destination).catch(() => {});
       await Deno.symlink(path, destination);

@@ -131,5 +131,8 @@ export default defineConfig({
         { glob: "**/rdmd" },
       ],
     },
+    {
+      name: "charmbracelet/gum",
+    },
   ],
 });

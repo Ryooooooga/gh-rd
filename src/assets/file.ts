@@ -49,6 +49,10 @@ export function findAssetURL(
         pattern: /linux/i,
         score: 100,
       });
+      rules.push({
+        pattern: /android/i,
+        score: -10,
+      });
       break;
     case "windows":
       rules.push({

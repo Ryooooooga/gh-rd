@@ -167,12 +167,8 @@ gh-rd
   tokei --version
 }
 { # neovim
-  if [[ "$_cputype" = x86_64 ]]; then
-    test-command nvim
-    nvim --version
-  else
-    ! test-command nvim
-  fi
+  test-command nvim
+  nvim --version
 }
 { # ldc2
   test-command rdmd

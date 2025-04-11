@@ -4,5 +4,8 @@
     "dev": "deno run --watch --allow-read --allow-write --allow-net --allow-env --allow-run main.ts",
     "bench": "deno bench",
     "test": "deno test --allow-read"
+  },
+  "fmt": {
+    "exclude": ["**/testdata/*"]
   }
 }

@@ -76,6 +76,12 @@ export function findAssetURL(
         pattern: /arm(-|64)|aarch64/i,
         score: 50,
       });
+      if (os === "darwin") {
+        rules.push({
+          pattern: /amd64|x86_64|x64/i,
+          score: 40,
+        });
+      }
       break;
     default:
       arch satisfies never;

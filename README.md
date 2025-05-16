@@ -4,7 +4,7 @@ GitHub Releases binaries installer.
 
 ## Requirements
 
-- [Deno](https://deno.com/) v1.40 or later
+- [Deno](https://deno.com/) v2.3 or later
 - (tar)
 - (unzip)
 
